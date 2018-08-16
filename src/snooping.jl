@@ -96,7 +96,6 @@ function snoop_userimg(userimg, packages::Tuple{String, String}...)
     snooped_precompiles = map(packages) do package_snoopfile
         package, snoopfile = package_snoopfile
         abs_package_path = ispath(package) ? normpath(abspath(package)) : Pkg.dir(package)
-        @info "abs_package_path = [$abs_package_path]"
         file2snoop = normpath(abspath(joinpath(abs_package_path, snoopfile)))
         package = package_folder(get_root_dir(abs_package_path))
         isdir(package) || mkpath(package)
