@@ -221,9 +221,11 @@ function build_object(
     cache_dir = "cache_ji_v$VERSION"
     if julia_v07
         # TODO: verify if this initialization is correct for Julia v0.7
+        curdir = pwd()
         expr = "
   Base.__init__(); Sys.__init__() # initialize \"Base\" and \"Sys\" modules
   pushfirst!(Base.DEPOT_PATH, \"$cache_dir\") # save precompiled modules locally
+  push!(LOAD_PATH, \"$curdir\")
   include(\"$juliaprog\") # include Julia program file"
     else
         expr = "
