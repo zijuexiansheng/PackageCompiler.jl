@@ -183,8 +183,8 @@ function build_julia_cmd(
         compile, cpu_target, optimize, debug, inline, check_bounds, math_mode, depwarn
     )
     # TODO: `precompiled` and `compilecache` may be removed in future, see: https://github.com/JuliaLang/PackageCompiler.jl/issues/47
-    precompiled == nothing && cpu_target != nothing && (precompiled = "no")
-    compilecache == nothing && (compilecache = "no")
+    precompiled == nothing  # && cpu_target != nothing && (precompiled = "no")
+    compilecache == nothing # && (compilecache = "no")
     # TODO: `startup_file` may be removed in future with `julia-compile`, see: https://github.com/JuliaLang/julia/issues/15864
     startup_file == nothing && (startup_file = "no")
     julia_cmd = `$(Base.julia_cmd())`
