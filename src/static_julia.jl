@@ -225,7 +225,8 @@ function build_object(
         expr = "
   Base.__init__(); Sys.__init__() # initialize \"Base\" and \"Sys\" modules
   pushfirst!(Base.DEPOT_PATH, \"$cache_dir\") # save precompiled modules locally
-  push!(LOAD_PATH, \"$curdir\")
+  push!(LOAD_PATH, \"$curdir\", \"@\", \"@v#.#\", \"@stdlib\")
+  println(LOAD_PATH)
   include(\"$juliaprog\") # include Julia program file"
     else
         expr = "
