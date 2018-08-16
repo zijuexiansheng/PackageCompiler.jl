@@ -3,8 +3,8 @@ import Pkg
 
 function snoop_vanilla(filename, path)
     code_object = """
-    while !eof(STDIN)
-        eval(Main, deserialize(STDIN))
+    while !eof(stdin)
+        eval(Main, deserialize(stdin))
     end
     """
     julia_cmd = build_julia_cmd(
