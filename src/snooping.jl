@@ -1,4 +1,6 @@
 # Taken from SnoopCompile
+import Pkg
+
 function snoop_vanilla(filename, path)
     code_object = """
     while !eof(STDIN)
@@ -39,9 +41,9 @@ function snoop(path, compilationfile, csv)
             try
                 eval(tmp_mod, :(import $k))
                 println(io, "import $k")
-                info("import $k")
+                @info("import $k")
             catch e
-                warn("Module not found: $k")
+                @warn("Module not found: $k")
             end
         end
         for (k, v) in pc
@@ -57,7 +59,7 @@ function snoop(path, compilationfile, csv)
                     # (usually, SnoopCompile emits 1% erroring statements)
                     println(io, "try\n    ", ln, "\nend")
                 catch e
-                    warn("Not emitted because code couldn't parse: ", ln)
+                    @warn("Not emitted because code couldn't parse: ", ln)
                 end
             end
         end
@@ -78,7 +80,7 @@ function static_library_snoop()
                 # (usually, SnoopCompile emits 1% erroring statements)
                 println(io, "try\n    ", ln, "\nend")
             catch e
-                warn("Not emitted because code couldn't parse: ", ln)
+                @warn("Not emitted because code couldn't parse: ", ln)
             end
         end
     end
@@ -96,7 +98,8 @@ function snoop_userimg(userimg, packages::Tuple{String, String}...)
         abs_package_path = if ispath(package)
             normpath(abspath(package))
         else
-            Pkg.dir(package)
+            #Pkg.dir(package)
+            normpath(joinpath(dirname(pathof(JSON)), ".."))
         end
         file2snoop = normpath(abspath(joinpath(abs_package_path, snoopfile)))
         package = package_folder(get_root_dir(abs_package_path))

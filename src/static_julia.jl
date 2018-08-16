@@ -1,3 +1,5 @@
+import Pkg
+
 const depsfile = normpath(@__DIR__, "..", "deps", "deps.jl")
 
 if isfile(depsfile)
@@ -8,10 +10,10 @@ if isfile(depsfile)
         false
     end
     if !gccworks
-        error("GCC wasn't found. Please make sure that gcc is on the path and run Pkg.build(\"PackageCompiler\")")
+        @error("GCC wasn't found. Please make sure that gcc is on the path and run Pkg.build(\"PackageCompiler\")")
     end
 else
-    error("Package wasn't built correctly. Please run Pkg.build(\"PackageCompiler\")")
+    @error("Package wasn't built correctly. Please run Pkg.build(\"PackageCompiler\")")
 end
 
 system_compiler = gcc
@@ -96,12 +98,12 @@ function static_julia(
     end
 
     juliaprog = abspath(juliaprog)
-    isfile(juliaprog) || error("Cannot find file: \"$juliaprog\"")
+    isfile(juliaprog) || @error("Cannot find file: \"$juliaprog\"")
     quiet || println("Julia program file:\n  \"$juliaprog\"")
 
     if executable
         cprog = abspath(cprog)
-        isfile(cprog) || error("Cannot find file: \"$cprog\"")
+        isfile(cprog) || @error("Cannot find file: \"$cprog\"")
         quiet || println("C program file:\n  \"$cprog\"")
     end
 
@@ -189,7 +191,7 @@ function build_julia_cmd(
     startup_file == nothing && (startup_file = "no")
     julia_cmd = `$(Base.julia_cmd())`
     if length(julia_cmd.exec) != 5 || !all(startswith.(julia_cmd.exec[2:5], ["-C", "-J", "--compile", "--depwarn"]))
-        error("Unexpected format of \"Base.julia_cmd()\", you may be using an incompatible version of Julia")
+        @error("Unexpected format of \"Base.julia_cmd()\", you may be using an incompatible version of Julia")
     end
     sysimage == nothing || (julia_cmd.exec[3] = "-J$sysimage")
     precompiled == nothing || push!(julia_cmd.exec, "--precompiled=$precompiled")
@@ -315,7 +317,7 @@ function copy_files_array(files_array, builddir, verbose, message)
     verbose && println(message)
     copy = false
     for src in files_array
-        isfile(src) || error("Cannot find file: \"$src\"")
+        isfile(src) || @error("Cannot find file: \"$src\"")
         dst = joinpath(builddir, basename(src))
         if filesize(src) != filesize(dst) || ctime(src) > ctime(dst) || mtime(src) > mtime(dst)
             verbose && println("  $(basename(src))")
