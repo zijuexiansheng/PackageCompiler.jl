@@ -98,8 +98,7 @@ function snoop_userimg(userimg, packages::Tuple{String, String}...)
         abs_package_path = if ispath(package)
             normpath(abspath(package))
         else
-            #Pkg.dir(package)
-            normpath(joinpath(dirname(pathof(JSON)), ".."))
+            Pkg.dir(package)
         end
         file2snoop = normpath(abspath(joinpath(abs_package_path, snoopfile)))
         package = package_folder(get_root_dir(abs_package_path))
