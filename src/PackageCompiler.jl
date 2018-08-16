@@ -10,7 +10,7 @@ if julia_v07
     const isapple = Sys.isapple
     const iswindows = Sys.iswindows
     const JULIA_BINDIR = Sys.BINDIR
-    const contains07 = contains
+    const contains07(str, reg) = occursin(reg, str)
 else
     const isunix = is_unix
     const islinux = is_linux
@@ -39,7 +39,7 @@ function copy_system_image(src, dest, ignore_missing = false)
         destfile = joinpath(dest, file)
         if !isfile(srcfile)
             ignore_missing && continue
-            error("No file: $srcfile")
+            @error("No file: $srcfile")
         end
         if isfile(destfile)
             if isfile(destfile * ".backup")
@@ -47,12 +47,12 @@ function copy_system_image(src, dest, ignore_missing = false)
             end
             mv(destfile, destfile * ".backup", remove_destination = true)
         end
-        info("Copying system image: $srcfile to $destfile")
+        @info("Copying system image: $srcfile to $destfile")
         cp(srcfile, destfile, remove_destination = true)
     end
 end
 
-julia_cpu_target(x) = error("CPU target needs to be a string or `nothing`")
+julia_cpu_target(x) = @error("CPU target needs to be a string or `nothing`")
 julia_cpu_target(x::String) = x # TODO match against available targets
 if julia_v07
     function julia_cpu_target(::Nothing)
@@ -114,7 +114,7 @@ function compile_package(packages...; kw_args...)
         # If no explicit path to a seperate precompile file, use runtests
         isa(package, String) && return (package, "test/runtests.jl")
         isa(package, Tuple{String, String}) && return package
-        error("Unrecognized package. Use `packagename::String`, or (packagename::String, rel_path_to_testfile::String). Found: $package")
+        @error("Unrecognized package. Use `packagename::String`, or (packagename::String, rel_path_to_testfile::String). Found: $package")
     end
     compile_package(args...; kw_args...)
 end
@@ -131,7 +131,7 @@ function compile_package(packages::Tuple{String, String}...; force = false, reus
     if !reuse
         snoop_userimg(userimg, packages...)
     end
-    !isfile(userimg) && reuse && error("Nothing to reuse. Please run `compile_package(reuse = true)`")
+    !isfile(userimg) && reuse && @error("Nothing to reuse. Please run `compile_package(reuse = true)`")
     image_path = sysimg_folder()
     build_sysimg(image_path, userimg)
     imgfile = joinpath(image_path, "sys.$(Libdl.dlext)")
@@ -141,22 +141,22 @@ function compile_package(packages::Tuple{String, String}...; force = false, reus
             backup = syspath * ".packagecompiler_backup"
             isfile(backup) || mv(syspath, backup)
             cp(imgfile, syspath)
-            info(
+            @info(
                 "Replaced system image successfully. Next start of julia will load the newly compiled system image.
                 If you encounter any errors with the new julia image, try `PackageCompiler.revert([debug = false])`"
             )
         catch e
-            warn("An error has occured while replacing sysimg files:")
-            warn(e)
-            info("Recovering old system image from backup")
+            @warn("An error has occured while replacing sysimg files:")
+            @warn(e)
+            @info("Recovering old system image from backup")
             # if any file is missing in default system image, revert!
             if !isfile(syspath)
-                info("$syspath missing. Reverting!")
+                @info("$syspath missing. Reverting!")
                 revert(debug)
             end
         end
     else
-        info("""
+        @info("""
             Not replacing system image.
             You can start julia with julia -J $(imgfile) to load the compiled files.
         """)
@@ -166,7 +166,7 @@ end
 
 function __init__()
     if Base.julia_cmd().exec[2] != "-Cnative"
-        warn("Your Julia system image is not compiled natively for this CPU architecture.
+        @warn("Your Julia system image is not compiled natively for this CPU architecture.
         Please run `PackageCompiler.force_native_image!()` for optimal Julia performance"
         )
     end

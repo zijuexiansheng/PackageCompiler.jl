@@ -55,7 +55,7 @@ function build()
             WinRPM.install("gcc", yes = true)
         end
         if !isfile(gccpath)
-            error("Couldn't install gcc via winrpm")
+            @error "Couldn't install gcc via winrpm"
         end
         @info "using gcc from WinRPM as a compiler"
     elseif isunix() && verify_gcc("gcc")
