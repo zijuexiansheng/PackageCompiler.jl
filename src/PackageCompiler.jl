@@ -48,7 +48,7 @@ function copy_system_image(src, dest, ignore_missing = false)
             mv(destfile, destfile * ".backup", remove_destination = true)
         end
         @info("Copying system image: $srcfile to $destfile")
-        cp(srcfile, destfile, remove_destination = true)
+        cp(srcfile, destfile, force = true)
     end
 end
 

@@ -316,7 +316,7 @@ function copy_files_array(files_array, builddir, verbose, message)
         dst = joinpath(builddir, basename(src))
         if filesize(src) != filesize(dst) || ctime(src) > ctime(dst) || mtime(src) > mtime(dst)
             verbose && println("  $(basename(src))")
-            cp(src, dst, remove_destination=true, follow_symlinks=false)
+            cp(src, dst, force=true, follow_symlinks=false)
             copy = true
         end
     end
