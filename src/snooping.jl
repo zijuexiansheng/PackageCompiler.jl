@@ -12,7 +12,7 @@ function snoop_vanilla(filename, path)
         nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing
     )
     @show julia_cmd
-    in, io = open(`$julia_cmd --eval $code_object`, "w", STDOUT)
+    in, io = open(`$julia_cmd --eval $code_object`, stdout, write = true)
     serialize(in, quote
         import SnoopCompile
     end)
